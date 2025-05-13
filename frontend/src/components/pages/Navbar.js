@@ -5,6 +5,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { faUtensils } from '@fortawesome/free-solid-svg-icons';
+import CartIcon from '../CartIcon';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { faList } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
@@ -35,7 +36,7 @@ function Navbar() {
 
             <div className='col col-4 nav-header-between'>
                 <NavLink to='/' className='nav-header-between_home' activeClassName='active'>Trang chủ</NavLink>
-                <NavLink to='/shop' className='nav-header-between_shop' activeClassName='active'>Ẩm Thực</NavLink>
+                <NavLink to='/menu' className='nav-header-between_shop' activeClassName='active'>Ẩm Thực</NavLink>
             </div>
 
             <div className='col col-4 nav-header-right'>
@@ -44,7 +45,8 @@ function Navbar() {
                 <label for='checkbox_navbar' className='overlay_navbar'></label>
 
                 <Link to='/cart' className='nav-header-right_cart'>
-                    <FontAwesomeIcon className='faCartShopping' icon={faCartShopping} />
+                    {/* <FontAwesomeIcon className='faCartShopping' icon={faCartShopping} /> */}
+                    <CartIcon />
                 </Link>
 
                 {loggedIn ? (

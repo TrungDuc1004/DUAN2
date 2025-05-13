@@ -4,6 +4,7 @@ import { ToastContext } from "./contexts/ToastContext";
 import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import '../css/CreateProduct.css' // form giong nhau nen dung lai
+import api from '../api/Axios';
 
 function UpdateAccount() {
     const { id } = useParams();
@@ -25,11 +26,7 @@ function UpdateAccount() {
         if (!token) {
             console.error('Người dùng chưa đăng nhập.');
         } else {
-            axios.get(`http://localhost:5000/products/update/${id}/edit-account`, {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi token trong header
-                }
-            })
+            api.get(`/products/update/${id}/edit-account`)
                 .then(response => {
                     const { username, email, password, role, phonenumber, address, city, country } = response.data
                     setUsername(username);
@@ -64,11 +61,7 @@ function UpdateAccount() {
         if (!localStorage.getItem('token')) {
             showToast({ title: "Bạn cần đăng nhập trước!", type: "warning" });
         } else {
-            axios.put(`http://localhost:5000/products/update/${id}/account`, accountData, {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi token trong header
-                }
-            })
+            api.put(`/products/update/${id}/account`, accountData)
                 .then(response => {
                     showToast({ title: "Cập nhật thành công!", type: "success" });
                 })

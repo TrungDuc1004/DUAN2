@@ -1,11 +1,11 @@
-import React from "react";
-import axios from "axios";
+
 import { useState, useContext } from "react";
 import { ToastContext } from "./contexts/ToastContext";
 import { AuthContext } from "./contexts/AuthContext";
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import '../css/Login.css'
+import api from "../api/Axios";
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ function Login() {
     const handleLogin = (e) => {
         e.preventDefault();
 
-        axios.post('http://localhost:5000/user/login', { email, password })
+        api.post('/user/login', { email, password })
             .then((response) => {
                 const { token, username, role } = response.data;
                 login(token, username, role);

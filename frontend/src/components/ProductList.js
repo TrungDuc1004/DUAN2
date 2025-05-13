@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus, faMagnifyingGlass, faStar, faForward, faBackward } from '@fortawesome/free-solid-svg-icons';
 import debounce from 'lodash.debounce';
 import '../css/ProductList.css';
+import api from "../api/Axios";
 
 function ProductList() {
     const [products, setProducts] = useState([]);
@@ -28,7 +29,7 @@ function ProductList() {
             limit,
         };
 
-        axios.get('http://localhost:5000/products/shop', { params })
+        api.get('/products/menu', { params })
             .then((response) => {
                 const { data, totalPages } = response.data;
                 setProducts(data);

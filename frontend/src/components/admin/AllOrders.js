@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import '../../css/AllOrder.css';
+import api from "../../api/Axios";
 
 function AllOrders() {
     const { Items, ModalOpen, productIdToDelete, setItems, setModalOpen, handleOpenModal, handleCloseModal } = useContext(ModalContext);
@@ -18,11 +19,7 @@ function AllOrders() {
         if (!token) {
             console.error('Người dùng chưa đăng nhập.');
         } else {
-            axios.get('http://localhost:5000/allorder', {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi token trong header
-                }
-            })
+            api.get('/allorder')
                 .then(response => {
                     setItems(response.data); // Giỏ hàng từ API
                 })
@@ -38,11 +35,7 @@ function AllOrders() {
             if (!token) {
                 console.error('Người dùng chưa đăng nhập.');
             } else {
-                axios.delete(`http://localhost:5000/allorder/${productIdToDelete}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Gửi token trong header
-                    }
-                })
+                api.delete(`/allorder/${productIdToDelete}`)
                     .then(response => {
                         setItems(prevItems => prevItems.filter(item => item._id !== productIdToDelete));
                     })

@@ -1,5 +1,4 @@
-import React from "react";
-import axios from 'axios';
+
 import DeleteModal from "../DeleteModal";
 import { ModalContext } from "../contexts/ModalContext";
 import { useContext, useEffect } from "react";
@@ -9,6 +8,7 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import '../../css/AllAccount.css';
 import '../../css/DeleteModal.css'
+import api from "../../api/Axios";
 
 function AllAccounts() {
     const { Items, ModalOpen, productIdToDelete, setItems, setModalOpen, handleOpenModal, handleCloseModal } = useContext(ModalContext);
@@ -23,11 +23,7 @@ function AllAccounts() {
         if (!token) {
             console.error('Người dùng chưa đăng nhập.');
         } else {
-            axios.get('http://localhost:5000/allaccount', {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi token trong header
-                }
-            })
+            api.get('/allaccount' )
                 .then(response => {
                     setItems(response.data) // Giỏ hàng từ API
                 })
@@ -43,11 +39,7 @@ function AllAccounts() {
             if (!token) {
                 console.error('Người dùng chưa đăng nhập.');
             } else {
-                axios.delete(`http://localhost:5000/allaccount/${productIdToDelete}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Gửi token trong header
-                    }
-                })
+                api.delete(`/allaccount/${productIdToDelete}`)
                     .then(response => {
                         setItems(prevItems => prevItems.filter(item => item._id !== productIdToDelete));
                     })

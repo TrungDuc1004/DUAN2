@@ -1,7 +1,8 @@
 import React, { useEffect, useContext } from 'react';
 import { ProfileContext } from './contexts/ProfileContext';
 import { ToastContext } from "./contexts/ToastContext";
-import axios from 'axios';
+
+import api from "../api/Axios";
 import '../css/Profile.css'
 
 function Profile() {
@@ -19,11 +20,7 @@ function Profile() {
 
     // Hàm fetchData để lấy dữ liệu từ API và cập nhật trạng thái
     const fetchData = () => {
-        axios.get('http://localhost:5000/user/profile', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`, // Lấy token từ localStorage
-            }
-        })
+        api.get('/user/profile' )
             .then(response => {
                 const { username, phonenumber, address, city, country } = response.data;
                 setUsername(username || '');
@@ -49,7 +46,7 @@ function Profile() {
             country,
         };
 
-        axios.put('http://localhost:5000/user/profile', updatedData)
+        api.put('/user/profile', updatedData )
             .then(response => {
                 // Cập nhật trạng thái trực tiếp từ dữ liệu trả về
                 const { username, phonenumber, address, city, country } = response.data;

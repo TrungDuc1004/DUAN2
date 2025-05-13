@@ -1,26 +1,27 @@
 const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
-    // Lấy token từ header Authorization
-    const token = req.header('Authorization')?.replace('Bearer ', ''); 
-    console.log('Token received:', token); // Log kiểm tra token
+    let token = req.header('Authorization');
 
     if (!token) {
-        // Nếu không có token, trả về lỗi 401
-        return res.status(401).json({ message: 'Access denied. No token provided.' });
+        return res.status(401).json({ message: "Không có token, vui lòng đăng nhập lại" });
     }
 
-    try {
-        // Xác minh token với secret key
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key');
-        req.user = decoded; // Lưu thông tin người dùng vào req.user
-        console.log('Decoded user:', decoded); // Log decoded user (nếu cần)
+    if (token.startsWith("Bearer ")) {
+        token = token.slice(7, token.length).trim();
+    }
 
-        next(); // Tiếp tục với middleware hoặc route handler tiếp theo
-    } catch (error) {
-        // Nếu token không hợp lệ, trả về lỗi 403
-        console.error('Error verifying token:', error); // Log chi tiết lỗi
-        return res.status(403).json({ message: 'Invalid token.' });
+    console.log("token", token);
+    
+    try {
+        const verified = jwt.verify(token, process.env.JWT_SECRET || "secret_key");
+        req.user = verified;
+        next();
+    } catch (err) {
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token đã hết hạn, vui lòng đăng nhập lại" });
+        }
+        return res.status(400).json({ message: "Token không hợp lệ" });
     }
 };
 

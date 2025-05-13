@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import '../css/Order.css';
+import api from "../api/Axios";
 
 function Order() {
     const [orderItems, setOrderItems] = useState([]);
@@ -12,11 +13,7 @@ function Order() {
         if (!token) {
             console.error('Người dùng chưa đăng nhập.');
         } else {
-            axios.get('http://localhost:5000/order', {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi token trong header
-                }
-            })
+            api.get('/order')
                 .then(response => {
                     setOrderItems(response.data); // Giỏ hàng từ API
                 })

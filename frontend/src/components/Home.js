@@ -26,7 +26,7 @@ function Home() {
                     <p>
                         Chúng tôi mong muốn lan toả tinh hoa ẩm thực Việt đến mọi người, mọi nơi!
                     </p>
-                    <Link to='/shop'>
+                    <Link to='/menu'>
                         <button>Xem Ngay</button>
                     </Link>
                 </div>
@@ -37,28 +37,6 @@ function Home() {
                 </div>
             </div>
 
-            {/* Cam kết dịch vụ */}
-            <div className='row commit-sign'>
-                <div className='col col-3 sign commit-sign_green'>
-                    <FontAwesomeIcon className='commit-sign_green-award' icon={faAward} />
-                    <p>Ẩm thực chất lượng<br />Đậm đà bản sắc Việt</p>
-                </div>
-
-                <div className='col col-3 sign commit-sign_orange'>
-                    <FontAwesomeIcon className='commit-sign_orange-swap' icon={faRightLeft} />
-                    <p>Hoàn tiền 100%<br />nếu không hài lòng</p>
-                </div>
-
-                <div className='col col-3 sign commit-sign_blue'>
-                    <FontAwesomeIcon className='commit-sign_blue-headset' icon={faHeadset} />
-                    <p>Hỗ trợ nhanh chóng<br />Tận tâm & chuyên nghiệp</p>
-                </div>
-
-                <div className='col col-3 sign commit-sign_yellow'>
-                    <FontAwesomeIcon className='commit-sign_yellow-truck' icon={faTruckFast} />
-                    <p>Miễn phí giao hàng<br />toàn quốc</p>
-                </div>
-            </div>
         </div>
     );
 }

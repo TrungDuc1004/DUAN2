@@ -11,7 +11,7 @@ router.post('/createaccount', verifyToken, productController.createAccount); // 
 router.get('/update/:id/edit-account', verifyToken, productController.getAccount); // get[/products/update/:id/edit-account]
 router.put('/update/:id/account', verifyToken, productController.updateAccount); // put[/products/update/:id/account]
 //
-router.get('/shop', productController.getShop); // get[/products/shop]
+router.get('/menu', productController.getShop); // get[/products/shop]
 router.get('/best-seller', productController.bestSeller); // get[/products/best-seller]
 router.get('/:slug', productController.slug); // get[/products/:slug]
 

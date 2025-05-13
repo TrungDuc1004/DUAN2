@@ -1,7 +1,6 @@
-import React from "react";
-import axios from 'axios';
 import DeleteModal from "./DeleteModal";
 import { ModalContext } from "./contexts/ModalContext";
+import { CartContext } from "./contexts/CartContext";
 import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,10 +8,11 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 import '../css/Cart.css';
 import '../css/DeleteModal.css'
+import api from "../api/Axios";
 
 function Cart() {
     const { Items, ModalOpen, productIdToDelete, setItems, setModalOpen, handleOpenModal, handleCloseModal } = useContext(ModalContext);
-    //
+    const {cartCount, setCartCount} = useContext(CartContext);
     const navigate = useNavigate();
 
     /// Lấy giỏ hàng từ server khi load trang
@@ -22,11 +22,7 @@ function Cart() {
         if (!token) {
             console.error('Người dùng chưa đăng nhập.');
         } else {
-            axios.get('http://localhost:5000/cart', {
-                headers: {
-                    Authorization: `Bearer ${token}` // Gửi token trong header
-                }
-            })
+            api.get('/cart')
                 .then(response => {
                     console.log('Giỏ hàng:', response.data); // Kiểm tra dữ liệu trả về
                     setItems(response.data) // Giỏ hàng từ API
@@ -38,46 +34,76 @@ function Cart() {
     }, []);
 
     // Xử lý logic xóa sản phẩm
-    const handleDelete = () => {
-        if (productIdToDelete) {
-            axios.delete(`http://localhost:5000/cart/${productIdToDelete}`)
-                .then(response => {
-                    setItems(prevItems => prevItems.filter(item => item._id !== productIdToDelete));
-                })
-                .catch((error) => {
-                    console.error('Error deleting product from cart:', error);
-                });
-        }
-        setModalOpen(false);
-    };
+const handleDelete = () => {
+    if (productIdToDelete) {
+        api.delete(`/cart/${productIdToDelete}`)
+            .then(() => {
+                setItems(prevItems => {
+                    const updatedItems = prevItems.filter(item => item._id !== productIdToDelete);
 
-    // + so luong
-    const handlePlus = (productIdCart) => {
-        axios.put(`http://localhost:5000/cart/${productIdCart}`, { action: "increase" })
-            .then(response => {
-                setItems(prevItems => prevItems.map(item => item._id === productIdCart
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-                ))
+                    // Cập nhật lại `cartCount`
+                    const newCartCount = updatedItems.reduce((total, item) => total + item.quantity, 0);
+                    setCartCount(newCartCount);
+
+                    return updatedItems;
+                });
+            })
+            .catch(error => console.error('Lỗi khi xóa sản phẩm:', error));
+    }
+    setModalOpen(false);
+};
+
+
+// + so luong
+const handlePlus = (productIdCart) => {
+    api.put(`/cart/${productIdCart}`, { action: "increase" })
+        .then(() => {
+            setItems(prevItems => {
+                const updatedItems = prevItems.map(item =>
+                    item._id === productIdCart
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
+
+                // Cập nhật lại `cartCount`
+                const newCartCount = updatedItems.reduce((total, item) => total + item.quantity, 0);
+                setCartCount(newCartCount);
+
+                return updatedItems;
+            });
+        })
+        .catch(error => {
+            console.error('Error increasing quantity:', error);
+        });
+};
+
+// - so luong
+const handleMinus = (productIdCart) => {
+    const currentItem = Items.find(item => item._id === productIdCart);
+
+    if (currentItem.quantity > 1) {
+        api.put(`/cart/${productIdCart}`, { action: "decrease" })
+            .then(() => {
+                setItems(prevItems => {
+                    const updatedItems = prevItems.map(item =>
+                        item._id === productIdCart
+                            ? { ...item, quantity: item.quantity - 1 }
+                            : item
+                    );
+
+                    // Cập nhật lại `cartCount`
+                    const newCartCount = updatedItems.reduce((total, item) => total + item.quantity, 0);
+                    setCartCount(newCartCount);
+
+                    return updatedItems;
+                });
             })
             .catch(error => {
-                console.error('Error increasing quantity:', error);
+                console.error('Error decreasing quantity:', error);
             });
-    };
+    }
+};
 
-    // - so luong
-    const handleMinus = (productIdCart) => {
-        const currentItem = Items.find(item => item._id === productIdCart);
-        if (currentItem.quantity > 1) {
-            axios.put(`http://localhost:5000/cart/${productIdCart}`, { action: "decrease" })
-                .then(response => {
-                    setItems(prevItems => prevItems.map(item => item._id === productIdCart
-                        ? { ...item, quantity: item.quantity - 1 }
-                        : item
-                    ))
-                })
-        }
-    };
 
     // Ẩn SL <= 1
     const isDisabled = (productIdCart) => {
@@ -146,7 +172,7 @@ function Cart() {
                                         </Link>
                                     </div>
                                     <p className="newPrice-red"><span className="font-size_small">đ</span>{item.newPrice}</p>
-                                    <p className="text-gray">Kho: 343</p>
+                                    {/* <p className="text-gray">Kho: 343</p> */}
                                 </div>
 
                                 <div className="col col-4 cart-item_quantity">
@@ -169,7 +195,7 @@ function Cart() {
                         <div className="cart-order-empty">
                             <div className="cart-order-empty_back">
                                 <p>Giỏ hàng trống.
-                                    <Link className='remove-text-decoration color-text-home' to={`/shop`}> Xem sản phẩm ngay!</Link>
+                                    <Link className='remove-text-decoration color-text-home' to={`/menu`}> Thêm sản phẩm ngay!</Link>
                                 </p>
                             </div>
 

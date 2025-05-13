@@ -73,19 +73,24 @@ exports.profileUser = (req, res) => {
         });
 };
 
-// get[/user/profile]
-exports.getProfileUser = (req, res) => {
-    const userId = req.user._id; //*hiển thị theo từng user
 
-    User.findOne({ userId })
-        .then(user => {
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
-            res.json(user); // Trả về thông tin user
-        })
-        .catch(error => {
-            console.error('Error fetching user:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        });
+
+// get[/user/profile]
+exports.getProfileUser = async (req, res) => {
+    try {
+        if (!req.user || !req.user.userId) {
+            return res.status(401).json({ error: 'Chưa xác thực' });
+        }
+
+        const user = await User.findById(req.user.userId).select('-password'); // Ẩn mật khẩu
+
+        if (!user) {
+            return res.status(404).json({ error: 'Không tìm thấy người dùng' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error('Lỗi lấy thông tin user:', error);
+        res.status(500).json({ error: 'Lỗi server' });
+    }
 };
